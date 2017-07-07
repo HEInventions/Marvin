@@ -1,0 +1,2 @@
+slackclient==1.0.6
+python-gitlab==0.21.2

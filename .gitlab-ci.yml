@@ -1,0 +1,28 @@
+image: python:latest
+
+stages:
+  - staticcheck
+  - build
+
+variables:
+  GITLAB_RELEASE_IMAGE: registry.gitlab.com/heinventions/marvin:latest
+
+staticcheck:
+  before_script:
+    - pip install -U flake8
+  script:
+    - flake8 .
+  stage: staticcheck
+
+build:
+  image: docker:git
+  services:
+  - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  stage: build
+  script:
+    - docker build -t $GITLAB_RELEASE_IMAGE .
+    - docker push $GITLAB_RELEASE_IMAGE
+  only:
+    - master
